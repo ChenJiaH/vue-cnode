@@ -7,6 +7,8 @@
 
 import preLoader from './assets/view/preLoader.vue';
 import all from './assets/view/all.vue';
+import topic from './assets/view/topic.vue';
+import about from './assets/view/about.vue';
 
 export default [
   {
@@ -18,5 +20,15 @@ export default [
     path: "/all",
     name: "all",
     component: all
+  },
+  {
+    path: "/topic/:id",
+    name: "topic",
+    component: topic
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: about
   }
 ];

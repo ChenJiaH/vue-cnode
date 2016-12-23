@@ -3,7 +3,8 @@
   "./common/_reset.scss",
   "./common/_variable.scss",
   "./common/_animation.scss",
-  "./common/_iconfont.scss";
+  "./common/_iconfont.scss",
+  "./common/_github-markdown.scss";
 
 // mm 在autoprefixer不会做编译，自己加吧
 @mixin mm {

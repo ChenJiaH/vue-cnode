@@ -6,7 +6,7 @@
         <div class="btn-menu" @click="openMenu">
           <span class="line"></span>
         </div>
-        <p class="title">{{title}}</p>
+        <p class="title">主题</p>
       </div>
       <div class="sidebar" :class="getOpenClass">
         <div class="logo">
@@ -22,29 +22,35 @@
         </div>
       </div>
     </div>
-    <div class="topic-box">
-      <ul class="topic-list">
-        <li v-for="topic in topics">
-          <router-link :to="{name:'topic',params:{id: topic.id}}" :data-id="topic.id">
-            <div class="topic-title">{{topic.title}}</div>
-            <div class="topic-content">
-              <div class="topic-avatar">
-                <img class="avatar" :src="topic.author.avatar_url" alt="">
+    <div class="topic-box" v-if="topic.title">
+      <div class="topic-title">{{topic.title}}</div>
+      <div class="author-box">
+        <div class="author-avatar">
+          <img :src="topic.author && topic.author.avatar_url" alt="">
+        </div>
+        <div class="author-desc">
+          <p class="author-name"></p>
+          <p class="author-ctime" v-if="topic.create_at">发布于：{{topic.create_at | getFreeTime}}</p>
+        </div>
+        <div class="author-view" v-if="topic.visit_count">{{topic.visit_count}}次浏览</div>
+      </div>
+      <div class="topic-content markdown-body" v-html="topic.content"></div>
+      <div class="topic-reply-count" v-if="topic.reply_count"><b>{{topic.reply_count}}</b>条回复</div>
+      <div class="topic-reply">
+        <ul class="reply-list">
+          <li v-for="reply in topic.replies">
+            <div class="reply-info">
+              <div class="reply-avatar">
+                <img :src="reply.author.avatar_url" alt="">
               </div>
-              <div class="topic-info">
-                <p>
-                  <span class="topic-author">{{topic.author.loginname}}</span>
-                  <span class="topic-total"><b>{{topic.reply_count}}</b>/{{topic.visit_count}}</span>
-                </p>
-                <p>
-                  <span class="topic-ctime">Post:{{topic.create_at | getFreeTime}}</span>
-                  <span class="topic-rtime">Reply:{{topic.last_reply_at| getFreeTime}}</span>
-                </p>
+              <div class="reply-desc">
+                <p class="clearfix">{{reply.author.loginname}} 发布于：{{reply.create_at | getFreeTime}}<span class="fr"><i class="iconfont icon-zan"></i>{{reply.ups.length}}</span></p>
               </div>
             </div>
-          </router-link>
-        </li>
-      </ul>
+            <div class="reply-content" v-html="reply.content"></div>
+          </li>
+        </ul>
+      </div>
     </div>
     <backTop></backTop>
   </div>
@@ -53,7 +59,7 @@
   import $ from 'webpack-zepto';
   import backTop from '../components/backtop.vue';
   export default {
-    name: "all",
+    name: "topic",
     components: {
       backTop,
     },
@@ -93,97 +99,35 @@
     },
     data (){
       return {
-        SCROLL_LOCK: false,
         menuShow: false,
-        topics: [],
-        params: {
-          page: 1,
-          limit: 20,
-          tab: 'all',
-          mdrender: true
-        }
+        topic: {},
+        topicId: '',
       }
     },
     mounted: function () {
-      // 先判断是否存在tab
-      if (this.$route.query && this.$route.query.tab) {
-        this.params.tab = this.$route.query.tab; // 当前所在类别
-        $(".menu-list a").eq(this.getTitle(this.$route.query.tab).idx).addClass("active").siblings("a").removeClass("active");
-      } else {
-        $(".menu-list a").eq(0).addClass("active").siblings("a").removeClass("active");
-      }
-      this.getTopics();
       $("body").removeClass("os-mode");
+      this.topicId = this.$route.params.id;
 
-      // 滚动
-      var self = this;
-      $(window).on("scroll", function () {
-        self.getScrollData()
-      })
+      // 加载主题数据
+      $.get('https://cnodejs.org/api/v1/topic/' + this.topicId, (res) => {
+        if (res && res.data) {
+          this.topic = res.data;
+          console.log(this.topic);
+          console.log(this.topic.author.avatar_url);
+        }
+      });
     },
     methods: {
-      getTitle: function (val) {
-        var obj = {};
-        switch (val) {
-          case 'ask':
-            obj.title = "问答";
-            obj.idx = 1;
-            break;
-          case 'share':
-            obj.title = "分享";
-            obj.idx = 2;
-            break;
-          case 'job':
-            obj.title = "招聘";
-            obj.idx = 3;
-            break;
-          case 'good':
-            obj.title = "精华";
-            obj.idx = 4;
-            break;
-          default:
-            obj.title = "全部";
-            obj.idx = 0;
-            break;
-        }
-        return obj;
-      },
-      getTopics: function (type) {
-        var self = this;
-        $.get("https://cnodejs.org/api/v1/topics", self.params, function (res) {
-          if (res && res.data) {  // 如果查到数据
-            self.SCROLL_LOCK = true;
-            self.topics = res.data;
-          }
-        })
-      },
-      // 滚动加载数据
-      getScrollData() {
-        if (this.SCROLL_LOCK) {
-
-          var totalheight = $(window).height() + $(window).scrollTop();
-          if ($(document).height() <= totalheight + 200) {
-            this.SCROLL_LOCK = false;
-            this.params.limit += 20;
-            this.getTopics();
-          }
-        }
-      },
       // 显示sidebar
       openMenu: function () {
         this.menuShow = true;
-        $("body").addClass("os-mode");
       },
       // 收起sidebar
       closeMenu: function () {
         this.menuShow = false;
-        $("body").removeClass("os-mode");
       },
     },
     computed: {
-      title: function () {
-        return this.getTitle(this.params.tab).title;
-      },
       getOpenClass: function () {
         if (this.menuShow) {
           return "open";
@@ -191,26 +135,12 @@
           return "";
         }
       }
-    },
-    watch: {
-      $route: function (to, from) {
-        // 如果是当前页面切换分类的情况
-        if (to.query && to.query.tab) {
-          this.params.tab = to.query.tab;
-          $(".menu-list a").eq(this.getTitle(to.query.tab).idx).addClass("active").siblings("a").removeClass("active");
-        } else {
-          $(".menu-list a").eq(0).addClass("active").siblings("a").removeClass("active");
-        }
-        this.getTopics();
-        // 隐藏导航栏
-        this.menuShow = false;
-        $("body").removeClass("os-mode");
-      }
     }
   }
 </script>
 <style rel="stylesheet/scss" type="text/css" lang="scss" scoped>
-  @import "../../assets/css/common/_variable.scss";
+  @import
+    "../../assets/css/common/_variable.scss";
 
   .content-box {
     position: relative;
@@ -316,65 +246,21 @@
         transform: translate(0, 0) translateZ(0);
       }
     }
-    .topic-box {
-      padding-top: 44px;
-      background-color: $white;
-      .topic-list {
-        li {
-          border-bottom: solid 1px $border;
-          a {
-            padding: 10px 15px;
-            display: block;
-            .topic-title {
-              color: $black;
-              font-size: 16px;
-              font-weight: bolder;
-              line-height: 24px;
-              height: 24px;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-            }
-            .topic-content {
-              display: flex;
-              padding-top: 10px;
-              .topic-avatar {
-                width: 40px;
-                height: 40px;
-                margin-right: 10px;
-                border-radius: 50%;
-                overflow: hidden;
-              }
-              .topic-info {
-                flex: 1;
-                width: 0;
-                p {
-                  display: flex;
-                  padding: 3px 0;
-                  span:first-child {
-                    flex: 1;
-                    width: 0;
-                  }
-                  span:last-child {
-                    text-align: right;
-                  }
-                  .topic-author {
-                    color: $secondBlack;
-                  }
-                  .topic-total {
-                    color: $secondBlack;
-                    b {
-                      color: $green;
-                    }
-                  }
-                  .topic-ctime {
-                    color: $dark;
-                  }
-                  .topic-rtime {
-                    color: $dark;
-                  }
-                }
-              }
+    .topic-box { padding-top: 44px; background-color: $white; line-height: 1.5;
+      .topic-title { margin: 15px; padding: 10px; border-bottom: solid 1px $border; font-size: 18px; font-weight: bolder;}
+      .author-box { padding: 0 15px; display: flex;
+        .author-avatar { width: 40px; height: 40px; margin-right: 10px; overflow: hidden; border-radius: 50%;}
+      }
+      .topic-content { padding: 15px; margin-top: 15px; border-bottom: solid 1px $border;}
+      .topic-reply-count {  padding: 15px;
+        b { color: $green; border-bottom: solid 1px $border;}
+      }
+      .topic-reply {
+        .reply-list { width: 100%;
+          li { border-bottom: solid 1px $border; padding: 10px 15px;
+            .reply-info { display: flex;
+              .reply-avatar { width: 40px; height: 40px; overflow: hidden; border-radius: 5px; margin-right: 10px;}
+              .reply-desc { flex: 1; width: 0;}
             }
           }
         }

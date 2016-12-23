@@ -22,29 +22,17 @@
         </div>
       </div>
     </div>
-    <div class="topic-box">
-      <ul class="topic-list">
-        <li v-for="topic in topics">
-          <router-link :to="{name:'topic',params:{id: topic.id}}" :data-id="topic.id">
-            <div class="topic-title">{{topic.title}}</div>
-            <div class="topic-content">
-              <div class="topic-avatar">
-                <img class="avatar" :src="topic.author.avatar_url" alt="">
-              </div>
-              <div class="topic-info">
-                <p>
-                  <span class="topic-author">{{topic.author.loginname}}</span>
-                  <span class="topic-total"><b>{{topic.reply_count}}</b>/{{topic.visit_count}}</span>
-                </p>
-                <p>
-                  <span class="topic-ctime">Post:{{topic.create_at | getFreeTime}}</span>
-                  <span class="topic-rtime">Reply:{{topic.last_reply_at| getFreeTime}}</span>
-                </p>
-              </div>
-            </div>
-          </router-link>
-        </li>
-      </ul>
+    <div class="about-box">
+      <div class="about-title">关于项目</div>
+      <div class="about-desc">一个CNode社区webapp版。采用vue&vue-router重写，使用webpack打包，调用Cnode API。</div>
+      <div class="about-title">作者博客</div>
+      <div class="about-desc"><a href="http://mcchen.club/">McChen - 博客</a></div>
+      <div class="about-title">源码地址</div>
+      <div class="about-desc"><a href="https://github.com/ChenJiaH/vue-cnode">https://github.com/ChenJiaH/vue-cnode</a></div>
+      <div class="about-title">意见反馈</div>
+      <div class="about-desc"><a href="https://github.com/ChenJiaH/vue-cnode/issues">交流反馈区</a></div>
+      <div class="about-title">最后</div>
+      <div class="about-desc">欢迎Github或者博客交流</div>
     </div>
     <backTop></backTop>
   </div>
@@ -110,7 +98,7 @@
         this.params.tab = this.$route.query.tab; // 当前所在类别
         $(".menu-list a").eq(this.getTitle(this.$route.query.tab).idx).addClass("active").siblings("a").removeClass("active");
       } else {
-        $(".menu-list a").eq(0).addClass("active").siblings("a").removeClass("active");
+        $(".menu-list a").eq(5).addClass("active").siblings("a").removeClass("active");
       }
       this.getTopics();
       $("body").removeClass("os-mode");
@@ -160,6 +148,9 @@
       // 滚动加载数据
       getScrollData() {
         if (this.SCROLL_LOCK) {
+          console.log($(window).height());
+          console.log($(window).scrollTop());
+          console.log($("body").css("height"));
 
           var totalheight = $(window).height() + $(window).scrollTop();
           if ($(document).height() <= totalheight + 200) {
@@ -204,7 +195,6 @@
         this.getTopics();
         // 隐藏导航栏
         this.menuShow = false;
-        $("body").removeClass("os-mode");
       }
     }
   }
@@ -316,69 +306,13 @@
         transform: translate(0, 0) translateZ(0);
       }
     }
-    .topic-box {
-      padding-top: 44px;
-      background-color: $white;
-      .topic-list {
-        li {
-          border-bottom: solid 1px $border;
-          a {
-            padding: 10px 15px;
-            display: block;
-            .topic-title {
-              color: $black;
-              font-size: 16px;
-              font-weight: bolder;
-              line-height: 24px;
-              height: 24px;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-            }
-            .topic-content {
-              display: flex;
-              padding-top: 10px;
-              .topic-avatar {
-                width: 40px;
-                height: 40px;
-                margin-right: 10px;
-                border-radius: 50%;
-                overflow: hidden;
-              }
-              .topic-info {
-                flex: 1;
-                width: 0;
-                p {
-                  display: flex;
-                  padding: 3px 0;
-                  span:first-child {
-                    flex: 1;
-                    width: 0;
-                  }
-                  span:last-child {
-                    text-align: right;
-                  }
-                  .topic-author {
-                    color: $secondBlack;
-                  }
-                  .topic-total {
-                    color: $secondBlack;
-                    b {
-                      color: $green;
-                    }
-                  }
-                  .topic-ctime {
-                    color: $dark;
-                  }
-                  .topic-rtime {
-                    color: $dark;
-                  }
-                }
-              }
-            }
-          }
-        }
+    .about-box {
+      padding: 64px 15px 20px;
+      .about-title { font-size: 16px; color: $black; line-height: 1.5; padding: 10px 0; font-weight: bolder;}
+      .about-desc { font-size: 14px; border-bottom: solid 1px $border; line-height: 1.5; padding-bottom: 10px;
+        a { color: $green;}
       }
     }
   }
 </style>
+

@@ -1,18 +1,45 @@
-# vue-cnode
+# Vue-cnode
 
-> A Vue.js project
+基于Vue&Vue-router(2.0)，利用CNode API重写CNode社区。
 
-## Build Setup
+## 线上实例Demo
 
-``` bash
-# install dependencies
-npm install
+[线上Demo请狠狠戳这里](http://mcchen.club/project/vue-cnode/index.html)
 
-# serve with hot reload at localhost:8080
-npm run dev
+## 文档
 
-# build for production with minification
-npm run build
+待添加
+
+## 快速上手
+
+### 项目克隆`git clone`或者直接Download
+
+```Bash
+git clone https://github.com/ChenJiaH/vue-cnode.git
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+### 安装依赖
+
+``` bash
+npm install
+```
+
+### 运行
+
+``` bash
+npm run dev
+```
+
+### 发布
+
+``` bash
+npm run dev
+```
+
+## 交流反馈
+
+[交流或者反馈意见](https://github.com/ChenJiaH/vue-cnode/issues)
+
+## License
+
+[MIT License](https://github.com/ChenJiaH/vue-cnode/blob/master/LICENSE)

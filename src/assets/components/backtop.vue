@@ -20,7 +20,6 @@
           self.show = false;
         }
       });
-      console.log("backtop:" + this.show);
     },
     methods: {
       backTop () {
@@ -31,8 +30,8 @@
   }
 </script>
 
-<style lang="scss" scoped>
-  .backtop { position: fixed; right: 20px; bottom: 20px; width: 36px; height: 36px;
+<style rel="stylesheet/scss" type="text/css" lang="scss" scoped>
+  .backtop { position: fixed; right: 20px; bottom: 20px; width: 36px; height: 36px; background-color: #ffffff;
     .icon-backtop { font-size: 36px; line-height: 36px; text-align: center; color: #80bd01;}
   }
 </style>

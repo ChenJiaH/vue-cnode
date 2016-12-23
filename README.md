@@ -8,7 +8,7 @@
 
 ## 文档
 
-待添加
+[文档](http://mcchen.club/2016/12/23/vue入门实例-基于vue&vue-router重写Cnode社区/)
 
 ## 快速上手
 
